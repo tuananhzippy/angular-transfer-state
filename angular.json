@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/test-transfer-state",
+            "outputPath": "dist/test-transfer-state/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -102,7 +102,8 @@
             "tsConfig": [
               "tsconfig.app.json",
               "tsconfig.spec.json",
-              "e2e/tsconfig.json"
+              "e2e/tsconfig.json",
+              "tsconfig.server.json"
             ],
             "exclude": [
               "**/node_modules/**"
@@ -120,9 +121,59 @@
               "devServerTarget": "test-transfer-state:serve:production"
             }
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/test-transfer-state/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "sourceMap": false,
+              "optimization": true
+            }
+          }
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "options": {
+            "browserTarget": "test-transfer-state:build",
+            "serverTarget": "test-transfer-state:server"
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "test-transfer-state:build:production",
+              "serverTarget": "test-transfer-state:server:production"
+            }
+          }
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "browserTarget": "test-transfer-state:build:production",
+            "serverTarget": "test-transfer-state:server:production",
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {}
+          }
         }
       }
     }
   },
-  "defaultProject": "test-transfer-state"
+  "defaultProject": "test-transfer-state",
+  "cli": {
+    "analytics": "f156d7d5-d1d5-4c24-89c7-7132f45a4bb3"
+  }
 }
